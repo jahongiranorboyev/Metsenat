@@ -14,11 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
 
 from django.contrib import admin
 from django.urls import path, include
+from apps.authentication.views import send_verification_code, login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,5 +33,8 @@ urlpatterns = [
 
     # Appeals app
     path('api/v1/appeals/', include('apps.appeals.urls')),
+
+    path('auth/send-code/', send_verification_code, name='send_verification_code'),  # Verification code yuborish
+    path('auth/login/', login, name='login'),
 ]
 
