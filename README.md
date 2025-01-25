@@ -10,7 +10,7 @@ cd metsenat
 ```
 ## 3. Create .env file using .env.example
 ```bash
-cp .env.example .env
+cp .env_example .env
 ```
 ## 4. Create a virtual environment using Python 3.10 
 ```bash
