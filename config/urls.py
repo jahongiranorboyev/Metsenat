@@ -22,11 +22,11 @@ from apps.authentication.views import send_verification_code, login
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # users app
+    # Users app
     path('api/v1/users/', include('apps.users.urls')),
 
     # Student-Sponsors app
-    path('api/v1/studentsponsors/', include('apps.sponsors.urls')),
+    path('api/v1/student-sponsors/', include('apps.sponsors.urls')),
 
     # Universities app
     path('api/v1/general/', include('apps.general.urls')),
@@ -34,7 +34,6 @@ urlpatterns = [
     # Appeals app
     path('api/v1/appeals/', include('apps.appeals.urls')),
 
-    path('auth/send-code/', send_verification_code, name='send_verification_code'),  # Verification code yuborish
+    path('auth/send-code/', send_verification_code, name='send_verification_code'),
     path('auth/login/', login, name='login'),
 ]
-

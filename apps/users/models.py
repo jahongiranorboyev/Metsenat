@@ -1,11 +1,19 @@
-from enum import Enum
+from decimal import Decimal
 
-from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractUser
 
 from django.db import models
-from django.core.validators import MinValueValidator, RegexValidator
-from decimal import Decimal
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator
+from django.contrib.auth.base_user import BaseUserManager
+
+
+
+from apps.general.models import University
+from apps.utils.functions import uzbek_phone_validator
+from apps.utils.models.base_model import AbstractBaseModel
+
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone_number, password=None, **extra_fields):
@@ -21,71 +29,96 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(phone_number, password, **extra_fields)
 
-class CustomUser(AbstractUser):
 
-    class UserTypeEnum(Enum):
-        STUDENT = 'student'
-        SPONSOR = 'sponsor'
+class CustomUser(AbstractUser, AbstractBaseModel):
+    class UserRole(models.TextChoices):
+        STUDENT = 'student', 'Student'
+        SPONSOR = 'sponsor', 'Sponsor'
+        ADMIN = 'admin', 'Admin'
 
-        @classmethod
-        def choices(cls):
-            return [(key.value, key.name.capitalize()) for key in cls]
+    class StudentDegree(models.TextChoices):
+        BACHELOR = 'bachelor', 'Bachelor'
+        MAGISTER = 'magister', 'Magister'
 
-    class DegreeTypeEnum(Enum):
-        BACHELOR = 'bachelor'
-        MAGISTER = 'magister'
+    class SponsorType(models.TextChoices):
+        PHYSICAL = 'physical', 'Physical'
+        LEGAL = 'legal', 'Legal'
 
-        @classmethod
-        def choices(cls):
-            return [(key.value, key.name.capitalize()) for key in cls]
-
-    username = None
+    email = username = None
     phone_number = models.CharField(
         max_length=13,
         unique=True,
-        validators=[
-            RegexValidator(
-                regex=r"^\+998\d{9}$",
-                message="The phone number must be in the Uzbek format (e.g., +998901234567)."
-            )
-        ]
+        validators=[uzbek_phone_validator]
     )
     photo = models.ImageField(
         upload_to='users/%Y/%m/%d',
-        blank=True, null=True
+        blank=True,
+        null=True
     )
-    user_type = models.CharField(
+    role = models.CharField(
         max_length=20,
-        choices=UserTypeEnum.choices(),
-        default=UserTypeEnum.STUDENT,
-        blank=True
+        choices=UserRole.choices,
+        blank=True,
+
     )
     degree = models.CharField(
         max_length=10,
-        choices=DegreeTypeEnum.choices(),
-        default=DegreeTypeEnum.BACHELOR,
-        blank=True
+        choices=StudentDegree.choices,
+        blank=True,
+        null=True
     )
     balance = models.DecimalField(
-        max_digits=10,
+        max_digits=50,
         decimal_places=2,
-        default=Decimal('0.00'),
-        validators=[MinValueValidator(Decimal('0.00'))],
+        default=Decimal('0'),
+        validators=[MinValueValidator(Decimal('0'))],
+        blank=True,
+        null=True,
+        editable=False
+    )
+    available_balance = models.DecimalField(
+        max_digits=50,
+        decimal_places=2,
+        default=Decimal('0'),
+        validators=[MinValueValidator(Decimal('0'))],
+        blank=True,
+        null=True,
+        editable=False
     )
     university = models.ForeignKey(
-        'general.University',
-        on_delete=models.SET_NULL,
+        University,
+        on_delete=models.PROTECT,
         null=True,
         blank=True
     )
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    sponsor_type = models.CharField(
+        max_length=20,
+        choices=SponsorType.choices,
+        blank=True,
+        null=True
+    )
 
     objects = CustomUserManager()
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['first_name', 'last_name']
-    ordering = ['phone_number']
+
+    def clean(self):
+
+        if self.role == self.UserRole.STUDENT and not self.university:
+            raise ValidationError({'university': 'The university is required'})
+
+        if self.role == self.UserRole.SPONSOR and not self.sponsor_type:
+            raise ValidationError({'sponsor_type': 'The sponsor type is required'})
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        if self.role == self.UserRole.STUDENT:
+            if not self.pk and not UserModel.objects.exists(role=UserModel.UserRole.STUDENT):
+                self.balance = self.university.contract_amount
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.username} ({self.get_user_type_display()})"
+        return self.phone_number
+
+
+UserModel = CustomUser
