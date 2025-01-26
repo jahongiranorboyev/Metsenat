@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import Sum
 
 from apps.appeals.models import Appeal
-from apps.users.models import UserModel
 from apps.utils.models.base_model import AbstractBaseModel
 
 

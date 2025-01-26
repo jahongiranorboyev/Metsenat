@@ -58,7 +58,7 @@ class CustomUser(AbstractUser, AbstractBaseModel):
     role = models.CharField(
         max_length=20,
         choices=UserRole.choices,
-        blank=True,
+        blank=True
 
     )
     degree = models.CharField(

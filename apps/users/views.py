@@ -1,4 +1,3 @@
-from django.template.context_processors import request
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -17,7 +16,7 @@ class UserListCreateAPIView(ListCreateAPIView):
     """
     queryset = CustomUser.objects.filter(role__in=[UserModel.UserRole.STUDENT, UserModel.UserRole.SPONSOR])
     serializer_class = CustomUserSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     # Filtering, searching, and sorting capabilities
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
