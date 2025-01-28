@@ -14,9 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
 from apps.authentication.views import send_verification_code, login
 
 urlpatterns = [
@@ -36,4 +37,6 @@ urlpatterns = [
 
     path('auth/send-code/', send_verification_code, name='send_verification_code'),
     path('auth/login/', login, name='login'),
+
+    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ]

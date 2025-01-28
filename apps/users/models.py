@@ -1,18 +1,14 @@
 from decimal import Decimal
 
-
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.contrib.auth.base_user import BaseUserManager
 
-
-
 from apps.general.models import University
 from apps.utils.functions import uzbek_phone_validator
 from apps.utils.models.base_model import AbstractBaseModel
-
 
 
 class CustomUserManager(BaseUserManager):
@@ -43,7 +39,6 @@ class CustomUser(AbstractUser, AbstractBaseModel):
     class SponsorType(models.TextChoices):
         PHYSICAL = 'physical', 'Physical'
         LEGAL = 'legal', 'Legal'
-
 
     email = username = None
     phone_number = models.CharField(
@@ -106,25 +101,37 @@ class CustomUser(AbstractUser, AbstractBaseModel):
         null=True
     )
 
-
-
     objects = CustomUserManager()
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def clean(self):
-
-        if self.role == self.UserRole.STUDENT and not self.university:
-            raise ValidationError({'university': 'The university is required'})
+        if self.role != self.UserRole.SPONSOR and self.sponsor_type:
+            raise ValidationError({"sponsor_type": "This field is required in only sponsor "})
 
         if self.role == self.UserRole.SPONSOR and not self.sponsor_type:
-            raise ValidationError({'sponsor_type': 'The sponsor type is required'})
+            raise ValidationError({"sponsor_type": "This field is required "})
+
+        if self.role == self.UserRole.STUDENT and (not self.university or not self.degree):
+            raise ValidationError({
+                'university': 'The university is required',
+                'degree': 'The degree is required',
+            })
+
+        if self.role == UserModel.UserRole.ADMIN and any([self.degree, self.university, self.sponsor_type]):
+            raise ValidationError(
+                {
+                "degree": "degree is not required",
+                "university": "university is not required",
+                "sponsor_type": "sponsor type is not required"
+                }
+            )
 
     def save(self, *args, **kwargs):
         self.clean()
         if self.role == self.UserRole.STUDENT:
             if not self.pk:
-               self.necessary_balance = self.university.contract_amount
+                self.necessary_balance = self.university.contract_amount
         super().save(*args, **kwargs)
 
     def __str__(self):
