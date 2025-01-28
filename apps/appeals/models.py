@@ -4,12 +4,19 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 
+from apps.users.models import UserModel
 from apps.utils.models.base_model import AbstractBaseModel
 from apps.utils.functions.validators import uzbek_phone_validator
 
 
 class Appeal(AbstractBaseModel):
+    """
+    Model for representing an appeal made by a sponsor.
+    """
     class AppealStatus(models.TextChoices):
+        """
+        Enumeration for the possible statuses of an appeal.
+        """
         New = 'new', 'New'
         Approved = 'approved', 'Approved'
         Reviewing = 'reviewing...', 'Reviewing...'
@@ -18,10 +25,14 @@ class Appeal(AbstractBaseModel):
     sponsor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
-        related_name='appeals'
+        related_name='appeals',
+        limit_choices_to={
+            'role': UserModel.UserRole.SPONSOR
+        },
     )
     phone_number = models.CharField(
         max_length=13,
+        unique=True,
         validators=[uzbek_phone_validator]
     )
     amount = models.DecimalField(
@@ -53,14 +64,10 @@ class Appeal(AbstractBaseModel):
         verbose_name_plural = 'Appeals'
         unique_together = (('sponsor', 'phone_number'),)
 
-
     def save(self, *args, **kwargs):
-        if not self.pk and not Appeal.objects.exists(pk=self.pk):
+        if self.pk is None:
             self.available_balance = self.amount
-
-
         super().save(*args, **kwargs)
 
-
     def __str__(self):
-        return f"Appeal by {self.sponsor_id} - {self.amount} UZS"
+        return self.phone_number

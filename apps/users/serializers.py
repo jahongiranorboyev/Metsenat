@@ -6,31 +6,33 @@ class CustomUserSerializer(serializers.ModelSerializer):
     """
     Serializer for CustomUser model. Handles validation and serialization of user data.
     """
-
+    role = serializers.ChoiceField(choices=UserModel.UserRole.choices)
     class Meta:
         model = UserModel
         fields = [
             'id',
             'first_name',
             'last_name',
-            'email',
+            'photo',
             'phone_number',
             'role',
             'degree',
             'university',
-            'balance',
+            'necessary_balance',
             'available_balance',
+            'sponsor_type',
+            'total_balance'
         ]
-        read_only_fields = ['id', 'balance',
-                            'available_balance']  # Prevents these fields from being updated by the user.
+        read_only_fields = ['id', 'total_balance',
+                            'available_balance','necessary_balance']
 
-    def validate_role(self, value):
-        """
-        Ensure that the role being assigned is valid and allowed.
-        """
-        if value not in [UserModel.UserRole.STUDENT, UserModel.UserRole.SPONSOR, UserModel.UserRole.ADMIN]:
-            raise serializers.ValidationError("Invalid role provided.")
-        return value
+    # def validate_role(self, value):
+    #     """
+    #     Ensure that the role being assigned is valid and allowed.
+    #     """
+    #     if value not in [UserModel.UserRole.STUDENT, UserModel.UserRole.SPONSOR, UserModel.UserRole.ADMIN]:
+    #         raise serializers.ValidationError("Invalid role provided.")
+    #     return value
 
     def create(self, validated_data):
         """

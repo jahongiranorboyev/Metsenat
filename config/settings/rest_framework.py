@@ -28,7 +28,7 @@ REST_FRAMEWORK = {
     # Generic view behavior
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_FILTER_BACKENDS': [
-        # 'rest_framework.filters.OrderingFilter',
+        'rest_framework.filters.OrderingFilter',
         'rest_framework.filters.SearchFilter',
         'django_filters.rest_framework.DjangoFilterBackend',
 

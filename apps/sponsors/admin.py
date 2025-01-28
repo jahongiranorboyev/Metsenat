@@ -4,8 +4,8 @@ from .models import StudentSponsor
 
 class StudentSponsorAdmin(admin.ModelAdmin):
     list_display = ('appeal', 'student', 'amount', 'created_at', 'updated_at')
-    list_filter = ('appeal__sponsor', 'student', 'appeal__status')
-    search_fields = ('appeal__id', 'student__first_name', 'student__last_name', 'amount')
+    list_filter = ('student', 'appeal__status')
+    search_fields = ('appeal__id', 'amount')
     raw_id_fields = ('appeal', 'student')
     ordering = ('-created_at',)
 

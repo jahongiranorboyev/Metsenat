@@ -18,6 +18,7 @@ class PaymentMethod(AbstractBaseModel):
         max_length=50,
         unique=True,
         blank=True,
+        editable=False,
         help_text="Slug will be automatically generated based on the name if left blank."
     )
 
@@ -42,7 +43,6 @@ class PaymentMethod(AbstractBaseModel):
 class University(AbstractBaseModel):
     name = models.CharField(
         max_length=100,
-        unique=True,
         verbose_name="University Name"
     )
     contract_amount = models.DecimalField(
@@ -56,20 +56,15 @@ class University(AbstractBaseModel):
         unique=True,
         blank=True,
         editable=False,
-        verbose_name="Slug"
     )
-
     def clean(self):
-        """
-        Ensure the slug is unique and matches the name.
-        Automatically generates slug if it's not provided.
-        """
-        if not self.slug or self.slug != slugify(self.name):
+        # If slug is not provided, generate it automatically from the name
+        if not self.slug:
             self.slug = slugify(self.name)
 
-        # Validate slug uniqueness
+        # Check if the slug is unique
         if University.objects.filter(slug=self.slug).exclude(id=self.id).exists():
-            raise ValidationError({'slug': f"The slug '{self.slug}' already exists."})
+            raise ValidationError(f"The slug '{self.slug}' is already taken.")
 
     def save(self, *args, **kwargs):
         """

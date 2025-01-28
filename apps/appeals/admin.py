@@ -3,8 +3,8 @@ from .models import Appeal
 
 
 class AppealAdmin(admin.ModelAdmin):
-    list_display = ('sponsor', 'phone_number', 'amount', 'available_balance', 'status', 'payment_method')
-    list_filter = ('status', 'sponsor')
+    list_display = ( 'phone_number', 'amount', 'available_balance', 'status', 'payment_method')
+    list_filter = ('status', )
     search_fields = ('phone_number',)
     readonly_fields = ('available_balance',)
 

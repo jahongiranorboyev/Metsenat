@@ -44,6 +44,7 @@ class CustomUser(AbstractUser, AbstractBaseModel):
         PHYSICAL = 'physical', 'Physical'
         LEGAL = 'legal', 'Legal'
 
+
     email = username = None
     phone_number = models.CharField(
         max_length=13,
@@ -58,8 +59,6 @@ class CustomUser(AbstractUser, AbstractBaseModel):
     role = models.CharField(
         max_length=20,
         choices=UserRole.choices,
-        blank=True
-
     )
     degree = models.CharField(
         max_length=10,
@@ -67,7 +66,7 @@ class CustomUser(AbstractUser, AbstractBaseModel):
         blank=True,
         null=True
     )
-    balance = models.DecimalField(
+    necessary_balance = models.DecimalField(
         max_digits=50,
         decimal_places=2,
         default=Decimal('0'),
@@ -77,6 +76,15 @@ class CustomUser(AbstractUser, AbstractBaseModel):
         editable=False
     )
     available_balance = models.DecimalField(
+        max_digits=50,
+        decimal_places=2,
+        default=Decimal('0'),
+        validators=[MinValueValidator(Decimal('0'))],
+        blank=True,
+        null=True,
+        editable=False
+    )
+    total_balance = models.DecimalField(
         max_digits=50,
         decimal_places=2,
         default=Decimal('0'),
@@ -98,6 +106,8 @@ class CustomUser(AbstractUser, AbstractBaseModel):
         null=True
     )
 
+
+
     objects = CustomUserManager()
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -113,8 +123,8 @@ class CustomUser(AbstractUser, AbstractBaseModel):
     def save(self, *args, **kwargs):
         self.clean()
         if self.role == self.UserRole.STUDENT:
-            if not self.pk and not UserModel.objects.exists(role=UserModel.UserRole.STUDENT):
-                self.balance = self.university.contract_amount
+            if not self.pk:
+               self.necessary_balance = self.university.contract_amount
         super().save(*args, **kwargs)
 
     def __str__(self):
