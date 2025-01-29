@@ -2,27 +2,20 @@ import json
 import random
 
 from django.http import JsonResponse
+from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
-from django.views.decorators.csrf import csrf_exempt
-
 from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
-
-@csrf_exempt
-def send_verification_code(request):
-    """
-        Handles sending a verification code to the provided phone number.
-        """
-    if request.method == "POST":
+class SendVerificationCodeAPIView(APIView):
+    def post(self, request):
         try:
             # Parse JSON data from the request body
             data = json.loads(request.body)
             phone_number = data.get("phone_number")
 
         except json.JSONDecodeError:
-
             # Handle invalid JSON format
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
@@ -46,17 +39,9 @@ def send_verification_code(request):
             "phone_number": phone_number,
             "verification_code": verification_code
         })
-    else:
-        # Handle non-POST methods
-        return JsonResponse({"error": "Method not allowed"}, status=405)
 
-
-@csrf_exempt
-def login(request):
-    """
-        Handles user login based on phone number and verification code.
-        """
-    if request.method == "POST":
+class LoginAPIView(APIView):
+    def post(self, request):
         try:
             # Parse JSON data from the request body
             data = json.loads(request.body)
@@ -104,5 +89,3 @@ def login(request):
             "access_token": access_token,
             "refresh_token": refresh_token
         })
-    else:
-        return JsonResponse({"error": "Method not allowed"}, status=405)

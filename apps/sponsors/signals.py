@@ -45,7 +45,7 @@ def revert_balances_on_delete(sender, instance, **kwargs):
     # Add back sponsorship amount to appeal's available balance
     instance.appeal.available_balance = F('available_balance') + instance.amount
     instance.appeal.save(update_fields=['available_balance'])
-    instance.appeal.refresh_from_db()  # Ensure fresh data
+    # instance.appeal.refresh_from_db()  # Ensure fresh data
 
     # Update sponsor's available_balance
     sponsor = instance.appeal.sponsor

@@ -18,7 +18,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-from apps.authentication.views import send_verification_code, login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,8 +34,8 @@ urlpatterns = [
     # Appeals app
     path('api/v1/appeals/', include('apps.appeals.urls')),
 
-    path('auth/send-code/', send_verification_code, name='send_verification_code'),
-    path('auth/login/', login, name='login'),
+    #AUTH apps
+    path('auth/', include('apps.authentication.urls')),
 
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ]
