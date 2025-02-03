@@ -35,22 +35,10 @@ class StudentSponsor(AbstractBaseModel):
     amount = models.DecimalField(
         max_digits=50,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal('0'))],
+        validators=[MinValueValidator(Decimal('1000000'))],
     )
 
-    def clean(self):
-        """
-        Custom validation method to ensure that:
-        - The sponsored amount is not greater than the available balance of the appeal.
-        - The sponsored amount is not greater than the student's available balance.
-        """
-        if self.amount > self.appeal.available_balance:
-            raise ValidationError({'message': 'Amount cannot be greater than the appeal available balance.'})
-        if self.amount > self.student.necessary_balance:
-            raise ValidationError({'message': 'Amount cannot be greater than the student\'s necessary balance.'})
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
 
     def __str__(self):
         """

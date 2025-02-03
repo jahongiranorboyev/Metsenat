@@ -23,16 +23,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'sponsor_type',
             'total_balance'
         ]
-        read_only_fields = ['id', 'total_balance',
-                            'available_balance','necessary_balance']
-
-    # def validate_role(self, value):
-    #     """
-    #     Ensure that the role being assigned is valid and allowed.
-    #     """
-    #     if value not in [UserModel.UserRole.STUDENT, UserModel.UserRole.SPONSOR, UserModel.UserRole.ADMIN]:
-    #         raise serializers.ValidationError("Invalid role provided.")
-    #     return value
+        read_only_fields = ['id', 'total_balance','available_balance','necessary_balance']
 
     def create(self, validated_data):
         """

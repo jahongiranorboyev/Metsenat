@@ -45,7 +45,7 @@ REST_FRAMEWORK = {
     'NUM_PROXIES': None,
 
     # Pagination
-    'PAGE_SIZE': 3,
+    'PAGE_SIZE': 10,
 
     # Filtering
     'SEARCH_PARAM': 'search',

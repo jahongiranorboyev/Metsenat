@@ -12,7 +12,7 @@ class CustomUserAdmin(BaseUserAdmin):
     # Configuration for user creation or editing page
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'photo', 'email', 'university', 'degree', 'sponsor_type')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'photo', 'university', 'degree', 'sponsor_type')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
         ('Additional info', {'fields': ('role', )}),

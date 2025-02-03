@@ -38,7 +38,7 @@ class Appeal(AbstractBaseModel):
     amount = models.DecimalField(
         max_digits=30,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal('0'))],
+        validators=[MinValueValidator(Decimal('1000000'))]
     )
     available_balance = models.DecimalField(
         max_digits=30,

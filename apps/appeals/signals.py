@@ -19,3 +19,11 @@ def update_sponsor_total_balance_on_save(sender, instance, **kwargs):
     )['total_balance'] or Decimal('0')
     instance.sponsor.total_balance = total_balance
     instance.sponsor.save(update_fields=['total_balance'])
+
+
+    sponsor = instance.sponsor
+    sponsor.available_balance = Appeal.objects.filter(
+        sponsor=sponsor,
+        status=Appeal.AppealStatus.Approved
+    ).aggregate(total_balance=Sum('available_balance'))['total_balance'] or Decimal('0')
+    sponsor.save(update_fields=['available_balance'])

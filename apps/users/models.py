@@ -106,6 +106,11 @@ class CustomUser(AbstractUser, AbstractBaseModel):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def clean(self):
+        if self.role == UserModel.UserRole.SPONSOR and any([self.degree, self.university]):
+            raise ValidationError({
+                "Degree and University are not allowed in sponsor"
+            })
+
         if self.role != self.UserRole.SPONSOR and self.sponsor_type:
             raise ValidationError({"sponsor_type": "This field is required in only sponsor "})
 
@@ -128,6 +133,8 @@ class CustomUser(AbstractUser, AbstractBaseModel):
             )
 
     def save(self, *args, **kwargs):
+        if self.is_superuser:
+            self.role = UserModel.UserRole.ADMIN
         self.clean()
         if self.role == self.UserRole.STUDENT:
             if not self.pk:
