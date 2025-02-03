@@ -13,11 +13,13 @@ LOCAL_APPS = [
     'apps.sponsors',
     'apps.general',
 ]
-
 THIRD_PARTY_APPS =[
+    'drf_yasg',
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
 
+
 ]
+
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
