@@ -6,7 +6,7 @@ from .permissions import StudentSponsorPermission
 
 # List and Create View for StudentSponsor
 class StudentSponsorListCreateView(generics.ListCreateAPIView):
-    queryset = StudentSponsor.objects.all()
+    queryset = StudentSponsor.objects.order_by('-created_at')
     serializer_class = StudentSponsorSerializer
     permission_classes = [StudentSponsorPermission]
 
@@ -17,6 +17,6 @@ class StudentSponsorListCreateView(generics.ListCreateAPIView):
 
 # Retrieve, Update, and Delete View for StudentSponsor
 class StudentSponsorDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = StudentSponsor.objects.all()
+    queryset = StudentSponsor.objects.order_by('-created_at')
     serializer_class = StudentSponsorSerializer
     permission_classes = [StudentSponsorPermission]

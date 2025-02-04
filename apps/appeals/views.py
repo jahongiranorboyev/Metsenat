@@ -18,12 +18,11 @@ class AppealListCreateView(ListCreateAPIView):
     Only accessible to `student` and `admin` for viewing appeals.
     Only admins can create new appeals.
     """
-    queryset = Appeal.objects.all()
+    queryset = Appeal.objects.order_by('-created_at')
     serializer_class = AppealSerializer
     permission_classes = [AppealPermission]
 
     # Additional filtering, searching, and sorting capabilities for Appeal model
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'payment_method', 'sponsor']
     search_fields = ['phone_number', 'amount']
     ordering_fields = ['pk', 'amount', 'available_balance', 'status']
@@ -37,7 +36,7 @@ class AppealDetailView(RetrieveUpdateDestroyAPIView):
     - Sponsor: Can update and delete their own appeals; can view all appeals.
     - Student: Can only view their own appeal; cannot update or delete.
     """
-    queryset = Appeal.objects.all()
+    queryset = Appeal.objects.order_by('-created_at')
     serializer_class = AppealSerializer
     permission_classes = [AppealPermission]
 

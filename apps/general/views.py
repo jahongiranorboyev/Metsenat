@@ -7,7 +7,7 @@ from .serializers import PaymentMethodSerializer, UniversitySerializer
 
 # List and Create View for PaymentMethod
 class PaymentMethodListCreateView(ListCreateAPIView):
-    queryset = PaymentMethod.objects.all()
+    queryset = PaymentMethod.objects.order_by('-created_at')
     serializer_class = PaymentMethodSerializer
     permission_classes = [IsAdminUser]
 
@@ -19,7 +19,7 @@ class PaymentMethodListCreateView(ListCreateAPIView):
 
 # Retrieve, Update, and Delete View for PaymentMethod
 class PaymentMethodDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = PaymentMethod.objects.all()
+    queryset = PaymentMethod.objects.order_by('-created_at')
     serializer_class = PaymentMethodSerializer
     permission_classes = [IsAdminUser]
 

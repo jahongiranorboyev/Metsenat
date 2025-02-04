@@ -6,7 +6,7 @@ git clone https://github.com/jahongiranorboyev/Metsenat.git
 ```
 ## 2. Change Directory
 ```bash
-cd metsenat
+cd Metsenat
 ```
 ## 3. Create .env file using .env.example
 ```bash
