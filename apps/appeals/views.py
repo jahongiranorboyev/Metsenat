@@ -1,6 +1,3 @@
-from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -9,7 +6,6 @@ from rest_framework.generics import (
 from .models import Appeal
 from .permissions import AppealPermission
 from .serializers import AppealSerializer
-
 
 
 class AppealListCreateView(ListCreateAPIView):
