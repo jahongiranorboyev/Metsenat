@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import SendVerificationCodeAPIView, LoginAPIView
+from .views import AuthCodeConfirmApiView, SendAuthCodeAPIView
 
 urlpatterns = [
-    path('send-verification-code/', SendVerificationCodeAPIView.as_view(), name='send_verification_code'),
-    path('login/', LoginAPIView.as_view(), name='login'),
+    path('send-verification-code/', SendAuthCodeAPIView.as_view(), name='send_verification_code'),
+    path('login/', AuthCodeConfirmApiView.as_view(), name='login'),
 ]

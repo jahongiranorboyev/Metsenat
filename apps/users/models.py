@@ -2,9 +2,10 @@ from decimal import Decimal
 
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.core.validators import MinValueValidator
 from django.contrib.auth.base_user import BaseUserManager
+from django.db.models import Q
 
 from apps.general.models import University
 from apps.utils.functions import uzbek_phone_validator
@@ -104,6 +105,27 @@ class CustomUser(AbstractUser, AbstractBaseModel):
     objects = CustomUserManager()
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    def add_group(self):
+        group, created = Group.objects.get_or_create(name=self.role)
+        if created:
+            match self.role:
+                case UserModel.UserRole.ADMIN:
+                    perms = Permission.objects.all()
+                case UserModel.UserRole.SPONSOR:
+                    perms = Permission.objects.filter(
+                        Q(codename__startswith='view_')
+                        |
+                        Q(codename__in=['change_appeal', 'add_appeal', 'delete_appeal'])
+                    )
+                case UserModel.UserRole.STUDENT:
+                    perms = Permission.objects.filter(codename__startswith='view_')
+                case _:
+                    perms = []
+
+            group.permissions.set(perms)
+        self.groups.set([group])
+        return group
 
     def clean(self):
         if self.role == UserModel.UserRole.SPONSOR and any([self.degree, self.university]):

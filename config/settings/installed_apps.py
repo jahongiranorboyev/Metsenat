@@ -12,6 +12,8 @@ LOCAL_APPS = [
     'apps.appeals',
     'apps.sponsors',
     'apps.general',
+    'apps.permissions',
+    'apps.authentication',
 ]
 THIRD_PARTY_APPS =[
     'drf_yasg',

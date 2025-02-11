@@ -35,9 +35,10 @@ urlpatterns = [
 
     # Appeals app
     path('api/v1/appeals/', include('apps.appeals.urls')),
+    path('api/v1/permissions/', include('apps.permissions.urls')),
 
     # AUTH apps
-    path('auth/', include('apps.authentication.urls')),
+    path('api/v1/auth/', include('apps.authentication.urls')),
 
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 
