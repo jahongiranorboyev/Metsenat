@@ -44,4 +44,4 @@ class StudentSponsor(AbstractBaseModel):
         """
         String representation of the StudentSponsor model, showing the appeal and student IDs.
         """
-        return f"{self.appeal_fullname} sponsors {self.student_id}"
+        return f"{self.appeal_id} sponsors {self.student_id}"
