@@ -70,11 +70,11 @@ class University(AbstractBaseModel):
         """
         Overriding save to validate and assign the slug field.
         """
+        self.clean()
         if self.pk :
             old_instance = University.objects.get(pk=self.pk)
             if self.contract_amount != old_instance.contract_amount:
                 raise ValidationError({"Contract amount must be unchangeable!"})
-        self.clean()
         super().save(*args, **kwargs)
 
     def __str__(self):

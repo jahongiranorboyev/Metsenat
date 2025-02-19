@@ -1,4 +1,3 @@
-from rest_framework import serializers
 from .models import University
 from .models import PaymentMethod
 from apps.utils.serializers import BaseModelSerializer

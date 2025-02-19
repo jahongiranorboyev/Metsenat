@@ -8,7 +8,7 @@ from django.utils.text import slugify
 from django.core.management.base import BaseCommand
 
 from apps.appeals.models import Appeal
-from apps.users.models import CustomUser
+from apps.users.models import CustomUser, UserModel
 from apps.sponsors.models import StudentSponsor
 from apps.general.models import University, PaymentMethod
 
@@ -51,8 +51,9 @@ class Command(BaseCommand):
                 role = fake.random_element([CustomUser.UserRole.STUDENT, CustomUser.UserRole.SPONSOR])
                 phone_number = f"+998{fake.random_int(900000000, 999999999)}"
                 first_name, last_name = fake.first_name(), fake.last_name()
-                university = fake.random_element(universities) if role == CustomUser.UserRole.STUDENT else None
-                sponsor_type = fake.random_element(["physical", "legal"]) if role == CustomUser.UserRole.SPONSOR else None
+                university = fake.random_element(universities) if role == CustomUser.UserRole.STUDENT else []
+                sponsor_type = fake.random_element([UserModel.SponsorType.PHYSICAL, UserModel.SponsorType.LEGAL]) if role == CustomUser.UserRole.SPONSOR else []
+                degree = fake.random_element([UserModel.StudentDegree.BACHELOR,UserModel.StudentDegree.MAGISTER]) if role == CustomUser.UserRole.STUDENT else None
                 necessary_balance = university.contract_amount if university else Decimal("0")
 
                 user = CustomUser(
@@ -62,6 +63,7 @@ class Command(BaseCommand):
                     last_name=last_name,
                     role=role,
                     university=university,
+                    degree=degree,
                     sponsor_type=sponsor_type,
                     necessary_balance=necessary_balance
                 )
