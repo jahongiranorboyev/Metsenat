@@ -5,8 +5,8 @@ from rest_framework.generics import (
 
 from .models import Appeal
 from .permissions import AppealPermission
-from .serializers import AppealSerializer
-
+from .serializers import AppealDetailSerializer ,AppealListCreateSerializer
+from apps.appeals.filters import AppealFilter
 
 class AppealListCreateView(ListCreateAPIView):
     """
@@ -15,13 +15,12 @@ class AppealListCreateView(ListCreateAPIView):
     Only admins can create new appeals.
     """
     queryset = Appeal.objects.order_by('-created_at')
-    serializer_class = AppealSerializer
-    permission_classes = [AppealPermission]
+    serializer_class = AppealListCreateSerializer
+    filterset_class = AppealFilter
+#    permission_classes = [AppealPermission]
 
     # Additional filtering, searching, and sorting capabilities for Appeal model
-    filterset_fields = ['status', 'payment_method', 'sponsor']
-    search_fields = ['phone_number', 'amount']
-    ordering_fields = ['pk', 'amount', 'available_balance', 'status']
+
 
 
 class AppealDetailView(RetrieveUpdateDestroyAPIView):
@@ -32,28 +31,7 @@ class AppealDetailView(RetrieveUpdateDestroyAPIView):
     - Sponsor: Can update and delete their own appeals; can view all appeals.
     - Student: Can only view their own appeal; cannot update or delete.
     """
-    queryset = Appeal.objects.order_by('-created_at')
-    serializer_class = AppealSerializer
-    permission_classes = [AppealPermission]
+    queryset=Appeal.objects.order_by('-created_at')
+    serializer_class=AppealDetailSerializer
+ #   permission_classes = [AppealPermission]
 
-    def get_object(self):
-        """
-        Check permissions based on the user's role when retrieving an appeal.
-        """
-        obj = super().get_object()
-
-        return obj
-
-    def update(self, request, *args, **kwargs):
-        """
-        Check permissions based on the user's role when updating appeal data.
-        """
-        return super().update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        """
-        Check permissions based on the user's role when deleting an appeal.
-        """
-        instance = self.get_object()
-
-        return super().destroy(request, *args, **kwargs)

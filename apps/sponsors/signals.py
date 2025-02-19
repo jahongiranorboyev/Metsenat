@@ -50,9 +50,7 @@ def store_previous_amount(sender, instance, **kwargs):
 def update_balances_on_save(sender, instance, created, **kwargs):
     """
     Update balances when a StudentSponsor is created or updated.
-    """
-    previous_amount = previous_amounts.pop(instance.pk, Decimal('0'))
-
+    """   
     instance.student.necessary_balance = F('necessary_balance') - instance.amount
     instance.student.save(update_fields=['necessary_balance'])
     instance.student.refresh_from_db()

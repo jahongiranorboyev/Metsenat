@@ -12,10 +12,11 @@ class AbstractBaseModel(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True,
         editable=False
+	
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        editable=False
+        editable=False	
     )
     created_by = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,

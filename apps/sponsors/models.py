@@ -11,7 +11,7 @@ from apps.utils.models.base_model import AbstractBaseModel
 
 
 class StudentSponsor(AbstractBaseModel):
-    # Foreign key to the Appeal model representing the appeal linked to this student-sponsor transaction
+   #  Foreign key to the Appeal model representing the appeal linked to this student-sponsor transaction
     appeal = models.ForeignKey(
         'appeals.Appeal',
         on_delete=models.PROTECT,
@@ -21,11 +21,11 @@ class StudentSponsor(AbstractBaseModel):
             'status': Appeal.AppealStatus.Approved,
         },
     )
-    # Foreign key to the User model representing the student receiving sponsorship
+   # Foreign key to the User model representing the student receiving sponsorship
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
-        related_name='student_studentsponsors',
+        related_name='student_sponsors',
         limit_choices_to={
             'necessary_balance__gt': 0,
             'role': UserModel.UserRole.STUDENT,
@@ -44,4 +44,4 @@ class StudentSponsor(AbstractBaseModel):
         """
         String representation of the StudentSponsor model, showing the appeal and student IDs.
         """
-        return f"{self.appeal_id} sponsors {self.student_id}"
+        return f"{self.appeal_fullname} sponsors {self.student_id}"

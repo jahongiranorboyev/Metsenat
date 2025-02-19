@@ -7,7 +7,7 @@ from django.core.validators import MinValueValidator
 from apps.users.models import UserModel
 from apps.utils.models.base_model import AbstractBaseModel
 from apps.utils.functions.validators import uzbek_phone_validator
-
+from apps.utils.functions.validators import check_fullname
 
 class Appeal(AbstractBaseModel):
     """
@@ -22,6 +22,10 @@ class Appeal(AbstractBaseModel):
         Reviewing = 'reviewing...', 'Reviewing...'
         Cancelled = 'cancelled', 'Cancelled'
 
+    sponsor_fullname = models.CharField(
+	max_length=50,
+	validators=[check_fullname]
+    )
     sponsor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -70,4 +74,4 @@ class Appeal(AbstractBaseModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.phone_number
+        return self.sponsor_fullname

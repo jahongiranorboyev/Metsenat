@@ -17,21 +17,13 @@ class SendAuthCodeSerializer(serializers.Serializer):
                                          allow_null=False,
                                          validators=[uzbek_phone_validator],
                                          write_only=True)
-
-    def validate_phone_number(self, phone_number):
-        """ validate phone number """
-        return phone_number
-
-    def validate(self, attrs):
-        return attrs
-
     def save(self, **kwargs):
         phone_number = self.validated_data['phone_number']
         auth_code = random.randint(100000, 999999)
-        eskiz_uz_service.send_message(phone_number=phone_number, message=f'your auth code is {auth_code}')
-        cache.set('phone_number', auth_code, 600 * 10)
-
+#        eskiz_uz_service.send_message(phone_number=phone_number, message=f'your auth code is {auth_code}')
+        cache.set('phone_number', auth_code, 10*60)
 print(cache.get('phone_number'))
+
 class AuthCodeConfirmSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=13,
                                          min_length=13,
@@ -45,10 +37,8 @@ class AuthCodeConfirmSerializer(serializers.Serializer):
     refresh_token = serializers.CharField(read_only=True)
 
     def validate(self, attrs):
-        print(attrs['auth_code'])
-        print(cache.get('phone_number'))
-        phone_number = attrs['phone_number']
         auth_code = attrs['auth_code']
+        phone_number =attrs['phone_number']
         if cache.get('phone_number') != auth_code:
             raise exceptions.ValidationError({"auth_code": "invalid auth code"})
 
@@ -57,7 +47,9 @@ class AuthCodeConfirmSerializer(serializers.Serializer):
         refresh = RefreshToken.for_user(user)
         attrs["access_token"] = str(refresh.access_token)
         attrs["refresh_token"] = str(refresh)
-
+         
+        cache.delete('phone_number')
+       
         return attrs
 
 # from datetime import timezone, timedelta

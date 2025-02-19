@@ -9,7 +9,7 @@ from .serializers import PaymentMethodSerializer, UniversitySerializer
 class PaymentMethodListCreateView(ListCreateAPIView):
     queryset = PaymentMethod.objects.order_by('-created_at')
     serializer_class = PaymentMethodSerializer
-    permission_classes = [IsAdminUser]
+#    permission_classes = [IsAdminUser]
 
     # Additional filtering, searching, and sorting capabilities for PaymentMethod model
     filterset_fields = ('name', )
@@ -21,14 +21,14 @@ class PaymentMethodListCreateView(ListCreateAPIView):
 class PaymentMethodDetailView(RetrieveUpdateDestroyAPIView):
     queryset = PaymentMethod.objects.order_by('-created_at')
     serializer_class = PaymentMethodSerializer
-    permission_classes = [IsAdminUser]
+ #   permission_classes = [IsAdminUser]
 
 
 # List and Create API View for University
 class UniversityListCreateView(ListCreateAPIView):
     queryset = University.objects.all()
     serializer_class = UniversitySerializer
-    permission_classes = [IsAdminUser]
+  #  permission_classes = [IsAdminUser]
 
     # Additional filtering, searching, and sorting capabilities for PaymentMethod model
     filterset_fields = ('name', )
@@ -40,4 +40,4 @@ class UniversityListCreateView(ListCreateAPIView):
 class UniversityDetailView(RetrieveUpdateDestroyAPIView):
     queryset = University.objects.all()
     serializer_class = UniversitySerializer
-    permission_classes = [IsAdminUser]
+   # permission_classes = [IsAdminUser]

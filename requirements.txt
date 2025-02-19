@@ -1,3 +1,4 @@
+requests==2.32.3
 Django==5.1.5
 pillow==11.1.0
 drf-yasg==1.21.8

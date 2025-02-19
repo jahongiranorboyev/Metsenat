@@ -17,16 +17,18 @@ class AppealPermission(BasePermission):
         if request.method == "POST":
             return request.user.is_authenticated and request.user.role == UserModel.UserRole.SPONSOR
 
-        if request.method in ["PUT", "PATCH", "DELETE"]:
-            return request.user.is_authenticated and request.user.role in [
-                UserModel.UserRole.ADMIN,
-                UserModel.UserRole.SPONSOR,
-            ]
-
         return False
 
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
 
-        return request.user.role == UserModel.UserRole.ADMIN or obj.sponsor == request.user
+        # Ensure that the appeal is not approved before modifying
+        if obj.status == Appeal.AppealStatus.Approved:
+            return False
+
+        # Only SPONSOR and ADMIN can modify
+        return request.user.is_authenticated and request.user.role in [
+            UserModel.UserRole.ADMIN,
+            UserModel.UserRole.SPONSOR,
+        ]

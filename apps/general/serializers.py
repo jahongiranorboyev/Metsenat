@@ -1,13 +1,16 @@
 from rest_framework import serializers
 from .models import University
 from .models import PaymentMethod
+from apps.utils.serializers import BaseModelSerializer
 
-class PaymentMethodSerializer(serializers.ModelSerializer):
+
+class PaymentMethodSerializer(BaseModelSerializer):
     class Meta:
         model = PaymentMethod
         fields = '__all__'
 
-class UniversitySerializer(serializers.ModelSerializer):
+
+class UniversitySerializer(BaseModelSerializer):
     class Meta:
         model = University
         fields = '__all__'

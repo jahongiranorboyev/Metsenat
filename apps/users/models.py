@@ -136,7 +136,7 @@ class CustomUser(AbstractUser, AbstractBaseModel):
         if self.role != self.UserRole.SPONSOR and self.sponsor_type:
             raise ValidationError({"sponsor_type": "This field is required in only sponsor "})
 
-        if self.role == self.UserRole.SPONSOR and not self.sponsor_type:
+        if self.role == self.UserRole.SPONSOR and self.sponsor_type is None:
             raise ValidationError({"sponsor_type": "This field is required "})
 
         if self.role == self.UserRole.STUDENT and (not self.university or not self.degree):

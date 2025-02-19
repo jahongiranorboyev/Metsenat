@@ -12,10 +12,10 @@ class UserListCreateAPIView(ListCreateAPIView):
     """
     queryset = CustomUser.objects.order_by('-created_at')
     serializer_class = CustomUserSerializer
-    permission_classes = [UserPermission]
+#    permission_classes = [UserPermission]
 
     # Filtering, searching, and sorting capabilities
-    filterset_fields = ['role', 'degree', 'university']
+    filterset_fields = ['role', 'degree', 'university','sponsor_type']
     search_fields = ['phone_number', 'first_name', 'last_name']
     ordering_fields = ['necessary_balance', 'available_balance']
 
@@ -30,4 +30,4 @@ class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     """
     queryset = CustomUser.objects.order_by('-created_at')
     serializer_class = CustomUserSerializer
-    permission_classes = [UserPermission]
+ #   permission_classes = [UserPermission]

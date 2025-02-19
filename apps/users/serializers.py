@@ -1,8 +1,9 @@
 from rest_framework import serializers
+from apps.utils.serializers import BaseModelSerializer 
 from .models import UserModel
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(BaseModelSerializer):
     """
     Serializer for CustomUser model. Handles validation and serialization of user data.
     """
@@ -21,23 +22,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'necessary_balance',
             'available_balance',
             'sponsor_type',
-            'total_balance'
+            'total_balance',
+	    'created_by',
+	    'updated_by'
         ]
-        read_only_fields = ['id', 'total_balance','available_balance','necessary_balance']
+        read_only_fields = ['created_by','updated_by','total_balance','available_balance','necessary_balance']
 
-    def create(self, validated_data):
-        """
-        Custom behavior for creating users.
-        For example, you can hash passwords here if the model has a password field.
-        """
-        return UserModel.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Custom behavior for updating user instances.
-        Prevent updates to read-only fields like `balance` and `available_balance`.
-        """
-        for field in self.Meta.read_only_fields:
-            validated_data.pop(field, None)  # Remove read-only fields from the update data
-
-        return super().update(instance, validated_data)
