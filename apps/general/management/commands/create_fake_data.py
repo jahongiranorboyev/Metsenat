@@ -48,19 +48,18 @@ class Command(BaseCommand):
             # Custom Users (Students and Sponsors)
             students, sponsors, users = [], [], []
             for _ in range(50):
-                role = fake.random_element([CustomUser.UserRole.STUDENT, CustomUser.UserRole.SPONSOR])
+                role = fake.random_element([CustomUser.UserRole.STUDENT, CustomUser.UserRole.SPONSOR,CustomUser.UserRole.ADMIN])
                 phone_number = f"+998{fake.random_int(900000000, 999999999)}"
-                first_name, last_name = fake.first_name(), fake.last_name()
-                university = fake.random_element(universities) if role == CustomUser.UserRole.STUDENT else []
-                sponsor_type = fake.random_element([UserModel.SponsorType.PHYSICAL, UserModel.SponsorType.LEGAL]) if role == CustomUser.UserRole.SPONSOR else []
+                full_name = fake.name()
+                university = fake.random_element(universities) if role == CustomUser.UserRole.STUDENT else None
+                sponsor_type = fake.random_element([UserModel.SponsorType.PHYSICAL, UserModel.SponsorType.LEGAL]) if role == CustomUser.UserRole.SPONSOR else None
                 degree = fake.random_element([UserModel.StudentDegree.BACHELOR,UserModel.StudentDegree.MAGISTER]) if role == CustomUser.UserRole.STUDENT else None
                 necessary_balance = university.contract_amount if university else Decimal("0")
 
                 user = CustomUser(
                     id=uuid.uuid4(),
                     phone_number=phone_number,
-                    first_name=first_name,
-                    last_name=last_name,
+                    full_name=full_name,
                     role=role,
                     university=university,
                     degree=degree,

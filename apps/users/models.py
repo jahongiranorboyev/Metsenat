@@ -1,11 +1,10 @@
 from decimal import Decimal
-from django.contrib.auth.models import AbstractUser,User
+from django.contrib.auth.models import AbstractUser,User,BaseUserManager
 
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.core.validators import MinValueValidator
-from django.contrib.auth.base_user import BaseUserManager
 from django.db.models import Q
 
 from apps.general.models import University
@@ -42,7 +41,12 @@ class CustomUser(AbstractUser, AbstractBaseModel):
         PHYSICAL = 'physical', 'Physical'
         LEGAL = 'legal', 'Legal'
 
-    email = username = None
+    full_name = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True
+    )
+    username = None
     phone_number = models.CharField(
         max_length=13,
         unique=True,
@@ -105,7 +109,6 @@ class CustomUser(AbstractUser, AbstractBaseModel):
 
     objects = CustomUserManager()
     USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def add_group(self):
         group, created = Group.objects.get_or_create(name=self.role)
@@ -136,9 +139,9 @@ class CustomUser(AbstractUser, AbstractBaseModel):
 
         if self.role != self.UserRole.SPONSOR and self.sponsor_type:
             raise ValidationError({"sponsor_type": "This field is required in only sponsor "})
-
-        if self.role == self.UserRole.SPONSOR and self.sponsor_type is None:
-            raise ValidationError({"sponsor_type": "This field is required "})
+        #
+        # if self.role == self.UserRole.SPONSOR and self.sponsor_type is None:
+        #     raise ValidationError({"sponsor_type": "This field is required "})
 
         if self.role == self.UserRole.STUDENT and (not self.university or not self.degree):
             raise ValidationError({

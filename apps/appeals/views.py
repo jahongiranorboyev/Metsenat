@@ -5,7 +5,7 @@ from rest_framework.generics import (
 
 from .models import Appeal
 from .permissions import AppealPermission
-from .serializers import AppealDetailSerializer ,AppealListCreateSerializer
+from .serializers import AppealSerializer
 from apps.appeals.filters import AppealFilter
 
 class AppealListCreateView(ListCreateAPIView):
@@ -15,7 +15,7 @@ class AppealListCreateView(ListCreateAPIView):
     Only admins can create new appeals.
     """
     queryset = Appeal.objects.order_by('-created_at')
-    serializer_class = AppealListCreateSerializer
+    serializer_class = AppealSerializer
     filterset_class = AppealFilter
 #    permission_classes = [AppealPermission]
 
@@ -32,6 +32,6 @@ class AppealDetailView(RetrieveUpdateDestroyAPIView):
     - Student: Can only view their own appeal; cannot update or delete.
     """
     queryset=Appeal.objects.order_by('-created_at')
-    serializer_class=AppealDetailSerializer
+    serializer_class=AppealSerializer
  #   permission_classes = [AppealPermission]
 

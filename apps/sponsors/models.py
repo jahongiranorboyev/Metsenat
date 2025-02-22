@@ -15,7 +15,6 @@ class StudentSponsor(AbstractBaseModel):
     appeal = models.ForeignKey(
         'appeals.Appeal',
         on_delete=models.PROTECT,
-        related_name='appeal_studentsponsors',
         limit_choices_to={
             'available_balance__gt': 0,
             'status': Appeal.AppealStatus.Approved,
@@ -25,7 +24,6 @@ class StudentSponsor(AbstractBaseModel):
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
-        related_name='student_sponsors',
         limit_choices_to={
             'necessary_balance__gt': 0,
             'role': UserModel.UserRole.STUDENT,

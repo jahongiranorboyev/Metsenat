@@ -59,9 +59,7 @@ class University(AbstractBaseModel):
     )
     def clean(self):
         # If slug is not provided, generate it automatically from the name
-        if not self.slug:
-            self.slug = slugify(self.name)
-
+        self.slug = slugify(self.name)
         # Check if the slug is unique
         if University.objects.filter(slug=self.slug).exclude(id=self.id).exists():
             raise ValidationError(f"The slug '{self.slug}' is already taken.")

@@ -1,4 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+
+from apps.appeals.models import Appeal
 from apps.users.models import UserModel
 
 
