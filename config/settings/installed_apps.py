@@ -14,6 +14,8 @@ LOCAL_APPS = [
     'apps.general',
     'apps.permissions',
     'apps.authentication',
+    'apps.main_statistics',
+
 ]
 THIRD_PARTY_APPS =[
     'drf_yasg',

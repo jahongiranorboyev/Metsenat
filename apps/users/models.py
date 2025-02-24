@@ -63,7 +63,7 @@ class CustomUser(AbstractUser, AbstractBaseModel):
     )
     degree = models.CharField(
         max_length=10,
-        choices=StudentDegree.choices,
+        choices=StudentDegree.choices,  
         blank=True,
         null=True
     )

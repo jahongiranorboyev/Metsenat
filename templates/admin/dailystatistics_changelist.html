@@ -1,0 +1,46 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <span>Statistics</span>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <h1>{% blocktrans %}Statistics for Year: {{ year }}{% endblocktrans %}</h1>
+
+  <form method="get" action=".">
+      <label for="year">{% trans "Select Year:" %}</label>
+      <input type="number" name="year" id="year" value="{{ year }}" />
+      <input type="submit" value="{% trans 'Filter' %}">
+  </form>
+
+  {% if custom_stats %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>{% trans "Month" %}</th>
+          <th>{% trans "Day" %}</th>
+          <th>{% trans "Student Count" %}</th>
+          <th>{% trans "Appeal Count" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for month, days in custom_stats.items %}
+          {% for day, counts in days.items %}
+            <tr>
+              <td>{{ month }}</td>
+              <td>{{ day }}</td>
+              <td>{{ counts.student_count }}</td>
+              <td>{{ counts.appeal_count }}</td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>{% trans "No statistics available for this year." %}</p>
+  {% endif %}
+{% endblock %}

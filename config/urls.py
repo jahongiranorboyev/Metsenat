@@ -18,7 +18,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-
 from .drf_yasg import *
 
 urlpatterns = [
@@ -37,6 +36,8 @@ urlpatterns = [
     path('api/v1/appeals/', include('apps.appeals.urls')),
     path('api/v1/permissions/', include('apps.permissions.urls')),
 
+    # Statistics app
+    path('api/v1/statistics/', include('apps.main_statistics.urls')),
     # AUTH apps
     path('api/v1/auth/', include('apps.authentication.urls')),
 
