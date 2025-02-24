@@ -7,13 +7,17 @@ from apps.users.models import CustomUser
 from apps.appeals.models import Appeal
 from .models import DailyStatistics
 
+
 class DummyQuerySet:
     def __iter__(self):
         return iter([])
+
     def count(self):
         return 0
+
     def __len__(self):
         return 0
+
 
 @admin.register(DailyStatistics)
 class DailyStatisticsAdmin(admin.ModelAdmin):
@@ -44,11 +48,22 @@ class DailyStatisticsAdmin(admin.ModelAdmin):
             day = appeal.created_at.day
             stats[month][day]["appeal_count"] += 1
 
+        # stats obyektini oddiy lug‘atga o‘girish
+        stats = {month: dict(days) for month, days in stats.items()}
+
+        total_students = CustomUser.objects.filter(role="student").count()
+        total_appeals = Appeal.objects.count()
+
         context = {
             **self.admin_site.each_context(request),
             "title": f"Statistics for Year: {year}",
-            "stats": dict(stats),
+            "stats": stats,
             "year": year,
+            "total_students": total_students,
+            "total_appeals": total_appeals,
             "app_label": "main_statistics",
         }
         return TemplateResponse(request, self.change_list_template, context)
+
+    def has_add_permission(self, request):
+        return False

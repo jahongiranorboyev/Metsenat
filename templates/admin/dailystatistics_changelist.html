@@ -1,6 +1,21 @@
 {% extends "admin/change_list.html" %}
 {% load i18n %}
 
+{% block extrastyle %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa; /* Django Admin fon rangi */
+    }
+    .content-wrapper {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+{% endblock %}
+
 {% block breadcrumbs %}
   <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
@@ -9,38 +24,60 @@
 {% endblock %}
 
 {% block content %}
-  <h1>{% blocktrans %}Statistics for Year: {{ year }}{% endblocktrans %}</h1>
+  <div class="container mt-4 content-wrapper">
+    <form method="get" action="." class="mb-3">
+      <div class="row g-2">
+        <div class="col-auto">
+          <label for="year" class="form-label">{% trans "Select Year:" %}</label>
+        </div>
+        <div class="col-auto">
+          <input type="number" class="form-control" name="year" id="year" value="{{ year }}" />
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary">{% trans 'Filter' %}</button>
+        </div>
+      </div>
+    </form>
 
-  <form method="get" action=".">
-      <label for="year">{% trans "Select Year:" %}</label>
-      <input type="number" name="year" id="year" value="{{ year }}" />
-      <input type="submit" value="{% trans 'Filter' %}">
-  </form>
-
-  {% if custom_stats %}
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>{% trans "Month" %}</th>
-          <th>{% trans "Day" %}</th>
-          <th>{% trans "Student Count" %}</th>
-          <th>{% trans "Appeal Count" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for month, days in custom_stats.items %}
-          {% for day, counts in days.items %}
+    {% if stats %}
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
             <tr>
-              <td>{{ month }}</td>
-              <td>{{ day }}</td>
-              <td>{{ counts.student_count }}</td>
-              <td>{{ counts.appeal_count }}</td>
+              <th>{% trans "Month" %}</th>
+              <th>{% trans "Day" %}</th>
+              <th>{% trans "Student Count" %}</th>
+              <th>{% trans "Appeal Count" %}</th>
             </tr>
-          {% endfor %}
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>{% trans "No statistics available for this year." %}</p>
-  {% endif %}
+          </thead>
+          <tbody>
+            {% for month, days in stats.items %}
+              {% for day, counts in days.items %}
+                <tr>
+                  <td>{{ month }}</td>
+                  <td>{{ day }}</td>
+                  <td>{{ counts.student_count }}</td>
+                  <td>{{ counts.appeal_count }}</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="alert alert-warning">{% trans "No statistics available for this year." %}</div>
+    {% endif %}
+
+    <div class="card mt-4">
+      <div class="card-body text-center">
+        <h5 class="card-title">{% trans "Total Statistics all time " %}</h5>
+        <p class="fs-4 text-primary">
+          {% trans "Total Students:" %} <strong>{{ total_students }}</strong>
+        </p>
+        <p class="fs-4 text-danger">
+          {% trans "Total Appeals:" %} <strong>{{ total_appeals }}</strong>
+        </p>
+      </div>
+    </div>
+  </div>
 {% endblock %}
