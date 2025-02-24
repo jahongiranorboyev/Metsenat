@@ -106,6 +106,12 @@ class CustomUser(AbstractUser, AbstractBaseModel):
         blank=True,
         null=True
     )
+    telegram_id = models.CharField(
+        max_length=20,
+        unique=True,
+        null=True,
+        blank=True
+    )
 
     objects = CustomUserManager()
     USERNAME_FIELD = 'phone_number'

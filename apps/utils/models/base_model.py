@@ -35,6 +35,7 @@ class AbstractBaseModel(models.Model):
         editable=False
     )
 
+
     class Meta:
         abstract = True
 

@@ -2,11 +2,13 @@ import random
 
 from django.core.cache import cache
 from rest_framework import serializers, exceptions
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.models import UserModel
 from apps.utils.functions import uzbek_phone_validator
-from apps.authentication.tests import eskiz_uz_service
+# from apps.authentication.tests import eskiz_uz_service
+from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken
+from apps.utils.functions.send_message_tg import send_message
 
 
 class SendAuthCodeSerializer(serializers.Serializer):
@@ -70,3 +72,75 @@ class LogoutSerializer(serializers.Serializer):
         except Exception as e:
             raise serializers.ValidationError("Invalid refresh token.")
         return value
+
+
+class TelegramAuthSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    username = serializers.CharField(required=False, allow_blank=True)
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    auth_date = serializers.IntegerField(write_only=True)
+    hash = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        """
+        Telegram login uchun hashni tekshirish
+        """
+        import hashlib
+        import hmac
+        import time
+        from django.conf import settings
+
+        bot_token = settings.TELEGRAM_BOT_TOKEN
+        auth_date = data.get("auth_date", 0)
+
+        # ✅ Eskirgan ma’lumotlarni rad etish (5 daqiqadan oshsa)
+        if time.time() - auth_date > 300:
+            raise serializers.ValidationError("Telegram login expired")
+
+        # ✅ Hashni tekshirish
+        data_check_string = "\n".join(
+            [f"{k}={data[k]}" for k in sorted(data.keys()) if k != "hash"]
+        )
+        secret_key = hashlib.sha256(bot_token.encode()).digest()
+        expected_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
+
+        if expected_hash != data.get("hash"):
+            raise serializers.ValidationError("Invalid Telegram login")
+
+        return data
+
+    def create_or_update_user(self, validated_data):
+        """
+        Foydalanuvchini yaratish yoki yangilash va JWT token qaytarish
+        """
+        telegram_id = validated_data["id"]
+        username = validated_data.get("username", f"user_{telegram_id}")
+
+        user, created = UserModel.objects.get_or_create(
+            telegram_id=telegram_id,
+            defaults={
+                "full_name": username,
+                "phone_number": f"+998000000{telegram_id % 10000}",
+                "role": UserModel.UserRole.SPONSOR
+            }
+        )
+
+        # ✅ JWT token yaratish
+        refresh = RefreshToken.for_user(user)
+
+        # ✅ Telegramga xabar yuborish
+        message = (
+            "✅ <b>Salom!</b> Siz tizimga muvaffaqiyatli kirdingiz.\n\n"
+            "🔹 <b>Sayt:</b> metsenat.john-tuit-dev.uz\n"
+            f"🔹 <b>Foydalanuvchi:</b> @{username}"
+        )
+        send_message(telegram_id, message)
+
+        return {
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "user": {
+                "id": user.id,
+                "username": user.username
+            }
+        }
